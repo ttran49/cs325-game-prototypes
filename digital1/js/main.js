@@ -114,17 +114,19 @@ function render (){
 }
 
 //handling the bulets hitting the asteroid
-function hitting (bullets, asteroid) {
-	if (hit == 10){
-		bullets.kill;
-		asteroid.kill;
+function hitting (bullet, asteroid) {  
+	if (hit === 10){
+		bullet.kill();
+		asteroid.kill();
+        asteroid.alive=false;
 		
 		//win
 		win.text="YOU WIN!";
 		win.visible=true;
 	}
-	
-	bullets.kill;
+
+	bullet.kill();
+    asteroid.alive=true;    
     hit++;
 	
 	//boom
@@ -132,5 +134,4 @@ function hitting (bullets, asteroid) {
     explosion.reset(asteroid.body.x, asteroid.body.y);
     explosion.play('explode', 30, false, true);
     
-    explosion.kill;
 }
