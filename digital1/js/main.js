@@ -33,14 +33,15 @@ function create(){
 	player= game.add.sprite(400,500,'player');
 	player.anchor.setTo(0.5, 0.5);
     game.physics.enable(player, Phaser.Physics.ARCADE);
+    player.body.collideWorldBounds = true;
 	
 	//asteroid
-	asteroid = game.add.sprite(48,50,'asteroid');
+	asteroid = game.add.sprite(200,50,'asteroid');
 	asteroid.anchor.setTo(0.5, 0.5);
 	asteroid.enableBody = true;
     game.physics.enable(asteroid, Phaser.Physics.ARCADE);
 	//moving using tween
-	var tween = game.add.tween(asteroid).to( { x: 200 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
+	var tween = game.add.tween(asteroid).to( { x: 300 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 	//making the asteroid moves down
 	tween.onLoop.add(function(){ asteroid.y+=30; }, this);
 	
@@ -56,7 +57,7 @@ function create(){
 	
 	//  An explosion pool
     explosions = game.add.group();
-    explosions.createMultiple(30, 'explode');
+    explosions.createMultiple(10, 'explode');
     explosions.forEach(function(asteroid){
 		asteroid.anchor.x = 0.5;
 		asteroid.anchor.y = 0.5;
@@ -105,16 +106,17 @@ function update(){
 	}
 	
 	//hitting the asteroid
-	game.physics.arcade.overlap(bullets, asteroid, hitting, null, this);
+	game.physics.arcade.overlap(bullets, asteroid, hitting, null, this);   //when hit the asteroid call hitting 
 }
 
 function render (){
 	
 }
 
-function hitting (bullet, asteroid) {
+//handling the bulets hitting the asteroid
+function hitting (bullets, asteroid) {
 	if (hit == 10){
-		bullet.kill;
+		bullets.kill;
 		asteroid.kill;
 		
 		//win
@@ -122,10 +124,13 @@ function hitting (bullet, asteroid) {
 		win.visible=true;
 	}
 	
-	bullet.kill;
+	bullets.kill;
+    hit++;
 	
 	//boom
 	var explosion = explosions.getFirstExists(false);
     explosion.reset(asteroid.body.x, asteroid.body.y);
     explosion.play('explode', 30, false, true);
+    
+    explosion.kill;
 }
