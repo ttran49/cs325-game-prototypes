@@ -58,6 +58,7 @@ function create(){
 	//  An explosion pool
     explosions = game.add.group();
     explosions.createMultiple(10, 'explode');
+    explosions.killOnComplete = true;
     explosions.forEach(function(asteroid){
 		asteroid.anchor.x = 0.5;
 		asteroid.anchor.y = 0.5;
@@ -115,7 +116,7 @@ function render (){
 
 //handling the bulets hitting the asteroid
 function hitting (bullet, asteroid) {  
-	if (hit === 10){
+	if (asteroid.alive==false){
 		bullet.kill();
 		asteroid.kill();
         asteroid.alive=false;
