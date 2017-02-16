@@ -17,15 +17,21 @@ var hearts;
 var fireRate=20;
 var nextFire=0;
 var bullets;
-
+var cursors;
+var score=0;
+var mark;
+var loveCounter=0;
+var loveText;
+    
 function create() {
+    
+    game.stage.backgroundColor = '#ff80df';
     
     game.physics.startSystem(Phaser.Physics.ARCADE);
     platforms = game.add.group();
     platforms.enableBody = true;
     var ground = platforms.create(0, game.world.height - 64, 'ground');
     ground.body.immovable = true;
-
 
     player = game.add.sprite(32, game.world.height - 150, 'pony');
     game.physics.arcade.enable(player);
@@ -45,6 +51,10 @@ function create() {
         var heart = hearts.create(Math.random() * 800, Math.random(), 'love');
         heart.body.gravity.y = Math.random() * 50;
     }
+    
+    loveText = game.add.text(0, 16, 'Love <3: 0', { fontSize: '32px', fill: '#000' });
+    mark = game.add.text(200, 16, '', { fill: '#ffa31a' });
+    cursors = game.input.keyboard.createCursorKeys();
 }
 
 function update() {
@@ -55,8 +65,23 @@ function update() {
     game.physics.arcade.overlap(bullets, hearts, hitLove, null, this);
 
     if(game.input.activePointer.leftButton.isDown){
+        if(game.input.mousePointer.x >= player.x && game.input.mousePointer.x <= (player.x+70) &&
+           game.input.mousePointer.y >= player.y && game.input.mousePointer.y <= (player.y+70)){
+            lovemark();
+        }
         fire();
     }
+    if (cursors.left.isDown)
+    {
+        player.body.velocity.x = -150;
+
+        
+    }
+    else if (cursors.right.isDown)
+    {
+        player.body.velocity.x = 150;  
+    }
+
 
 }
 
@@ -86,5 +111,11 @@ function hitLove(projectile,target){
         var heart=hearts.create(Math.random() * 800, Math.random(), 'love');
         heart.body.gravity.y=40;
     }
+    score+=1;
+    loveText.text= 'Love <3: '+score;
+}
+function lovemark(){
+    loveCounter++;
+    mark.text= "I see you! You have clicked on me " +loveCounter+" times! <3<3";
 }
 }
