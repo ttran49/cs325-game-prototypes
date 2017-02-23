@@ -36,11 +36,11 @@ function create() {
     //rats
     rats = game.add.physicsGroup();
     var y = 80;
-    for (var i = 0; i < 9; i++)
+    for (var i = 0; i < 30; i++)
     {
         var rat = rats.create(game.world.randomX, y, 'ratTexture');
-        rat.body.velocity.x = game.rnd.between(180, 350);
-        y += 48;
+        rat.body.velocity.x = game.rnd.between(180, 400);
+        y += 35;
     }
     
     //ground
