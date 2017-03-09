@@ -10,6 +10,9 @@ function preload() {
     game.load.image('bullet','assets/heart.png');
     game.load.image('background', 'assets/forest.jpg' );
     game.load.image('ground', 'assets/ground.png' );
+    game.load.image('sadface', 'assets/sad_face.png' );
+    game.load.image('youknow', 'assets/youknow.png' );
+    game.load.image('dead', 'assets/dead.png' );
     
     //sprite sheet
     game.load.spritesheet('ponySprite', 'assets/bigsprite.png', 64, 64, 96);
@@ -33,6 +36,9 @@ var background;
 var platforms;
 var right;
 var left;
+var sadFace;
+var lit;
+var dead;
     
 function create() {
     
@@ -70,7 +76,7 @@ function create() {
     bullets.setAll('checkWorldBounds', true);
     bullets.setAll('outOfBoundsKill', true);
     
-    //heart
+    //faces
     hearts = game.add.group();
     hearts.enableBody = true;
     for (var i = 0; i < 6; i++){
@@ -78,6 +84,24 @@ function create() {
         heart.body.gravity.y = Math.random() * 50;
     }
     
+    //sad face
+    sadFace=game.add.group();
+    sadFace.enableBody = true;
+    for (var i = 0; i < 6; i++){
+        var sadness = sadFace.create(Math.random() * 800, Math.random(), 'sadface');
+        sadness.body.gravity.y = Math.random() * 50;
+    }
+    
+    //emitter
+    lit=game.add.emitter(0, 0, 100);
+    lit.makeParticles('youknow');
+    lit.gravity = 500;
+    
+    dead=game.add.emitter(0, 0, 100);
+    dead.makeParticles('dead');
+    dead.gravity = 500;
+    
+    //text and input
     loveText = game.add.text(0, 16, 'Love <3: 0', { fontSize: '32px', fill: '#000' });
     mark = game.add.text(200, 16, '', { fill: '#ffa31a' });
     cursors = game.input.keyboard.createCursorKeys();
@@ -86,8 +110,13 @@ function create() {
 function update() {
     //hearts hit the ground
     game.physics.arcade.collide(platforms, hearts, hitGround, null, this);
+    //sad faces hit ground
+    game.physics.arcade.collide(platforms, sadFace, sadhitGround, null, this);
     //bullet hit hearts
     game.physics.arcade.overlap(bullets, hearts, hitLove, null, this);
+    
+    //bullet hit sad faces
+    game.physics.arcade.overlap(bullets, sadFace, hitSad, null, this);
 
     if(game.input.activePointer.leftButton.isDown){
         if(game.input.mousePointer.x >= player.x && game.input.mousePointer.x <= (player.x+70) &&
@@ -135,20 +164,46 @@ function fire() {
 function hitGround(ground, heart){
     heart.kill();
     //kill then spawn more
-    for (var i =0; i<1;i++){
-        var heart=hearts.create(Math.random() * 760, Math.random(), 'love');
-        heart.body.gravity.y=40;
-    }
+    var heart=hearts.create(Math.random() * 760, Math.random(), 'love');
+    heart.body.gravity.y=40;
+}
+    
+function sadhitGround (ground, sadface){
+    sadface.kill();
+    var sadness = sadFace.create(Math.random() * 800, Math.random(), 'sadface');
+    sadness.body.gravity.y = Math.random() * 50;
 }
 function hitLove(projectile,target){
     //destroy then spawn more
+    //before kill get x y
+    lit.x = target.x;
+    lit.y = target.y;
     target.kill();
     projectile.kill();
-    for (var i=0;i<1;i++){
-        var heart=hearts.create(Math.random() * 760, Math.random(), 'love');
-        heart.body.gravity.y=40;
-    }
+        
+    //spawn
+    var heart=hearts.create(Math.random() * 760, Math.random(), 'love');
+    heart.body.gravity.y=40;
+    
+    //emittor, score, text
+    lit.start(true,500,null,2);
     score++;
+    loveText.text= 'Love <3: '+score;
+}
+    
+function hitSad(projectile,target){
+    dead.x = target.x;
+    dead.y = target.y;
+    projectile.kill();
+    target.kill();
+    score--;
+        
+    //spawn
+    var sadness = sadFace.create(Math.random() * 800, Math.random(), 'sadface');
+    sadness.body.gravity.y = Math.random() * 50;
+    
+    //emittor and text
+    dead.start(true,500,null,2);
     loveText.text= 'Love <3: '+score;
 }
 function lovemark(){
