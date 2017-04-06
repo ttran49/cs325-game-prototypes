@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1300, 1400, Phaser.CANVAS, 'game', { preload: preload, create: create});
+var game = new Phaser.Game(1000, 1400, Phaser.CANVAS, 'game', { preload: preload, create: create});
 function preload(){
     game.load.image('player', 'assets/youknow.png');
     game.load.image('mouse', 'assets/mouse.png');
@@ -151,22 +151,31 @@ function create() {
 
 function down(pointer) {
 
-    var test = game.physics.p2.hitTest(pointer.position, [ player.body ]);
+    var test = game.physics.p2.hitTest(mouse.body, [ player.body ]);
     
     if (test.length)
     {
-        spring = game.physics.p2.createSpring(mouse,test[0], 0, 30, 1);
+        spring = game.physics.p2.createSpring(mouse,test[0], 1, 35, 2);
         
     }
 
 }
-function updateMouse(pointer, x, y, isDown) {
 
-    //move mouse body to cursor
-    if (player.body.x / mouse.body.x >= 1){
-        mouse.body.x = mouse.body.x * (player.body.x / mouse.body.x);
-    }
-    else {
+//NEED WORK TO SCALE THE MOUSE BODY POSITION TO POINTER POSITION X WHEN IN DIFFERENT PART OF TILE MAP
+function updateMouse(pointer, x, y, isDown) {
+    if (player.body.x > 1000 && player.body.x <= 2000){
+        mouse.body.x= pointer.position.x +1000;
+    } else if (player.body.x > 2000 && player.body.x <=3000){
+        mouse.body.x= pointer.position.x +2000;
+    } else if (player.body.x > 3000 && player.body.x <=4000){
+        mouse.body.x= pointer.position.x +3000;
+    } else if (player.body.x > 4000 && player.body.x <=5000){
+        mouse.body.x= pointer.position.x +4000;
+    } else if (player.body.x > 5000 && player.body.x <=6000){
+        mouse.body.x= pointer.position.x +5000;
+    } else if (player.body.x > 6000 && player.body.x <=7000){
+        mouse.body.x= pointer.position.x +6000;
+    } else {
         mouse.body.x = x;
     }
     mouse.body.y = y;
